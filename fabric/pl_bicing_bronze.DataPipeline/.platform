@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "pl_bicing_bronze"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "bcab3d81-de67-aaec-4b27-f99bb60d3208"
+  }
+}

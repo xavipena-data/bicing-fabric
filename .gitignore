@@ -1,0 +1,11 @@
+# Raw data (not versioned)
+data/
+
+# Jupyter / Python
+.ipynb_checkpoints/
+__pycache__/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/

@@ -1,0 +1,29 @@
+{
+  "formatVersion": "202502",
+  "computeEngineSettings": {
+    "allowModernEvaluationEngine": true
+  },
+  "name": "df_dim_station",
+  "queryGroups": [],
+  "documentLocale": "en-US",
+  "queriesMetadata": {
+    "dim_station_dfg2": {
+      "queryId": "5f1224aa-dd76-4ef9-8158-cbb78b0c4fc7",
+      "queryName": "dim_station_dfg2",
+      "loadEnabled": false
+    },
+    "dim_station_dfg2_DataDestination": {
+      "queryId": "099fe8a6-ba97-4418-8542-95de983a1922",
+      "queryName": "dim_station_dfg2_DataDestination",
+      "isHidden": true,
+      "loadEnabled": false
+    }
+  },
+  "connections": [
+    {
+      "path": "Lakehouse",
+      "kind": "Lakehouse",
+      "connectionId": "{\"ClusterId\":\"8681179c-ddaf-4f21-84d9-9f3e283e398b\",\"DatasourceId\":\"c7d7eae2-2b7b-4278-963e-3ecc90fc897d\"}"
+    }
+  ]
+}

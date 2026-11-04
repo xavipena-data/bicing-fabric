@@ -1,0 +1,123 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "ForEach",
+        "typeProperties": {
+          "isSequential": true,
+          "items": {
+            "value": "@pipeline().parameters.files",
+            "type": "Expression"
+          },
+          "activities": [
+            {
+              "type": "Copy",
+              "typeProperties": {
+                "source": {
+                  "type": "BinarySource",
+                  "formatSettings": {
+                    "type": "BinaryReadSettings"
+                  },
+                  "storeSettings": {
+                    "type": "LakehouseReadSettings",
+                    "recursive": true
+                  },
+                  "datasetSettings": {
+                    "type": "Binary",
+                    "typeProperties": {
+                      "location": {
+                        "type": "LakehouseLocation",
+                        "folderPath": "@concat('raw/bicing/', pipeline().parameters.folder)",
+                        "fileName": "@item()"
+                      }
+                    },
+                    "linkedService": {
+                      "name": "lh_bicing",
+                      "properties": {
+                        "type": "Lakehouse",
+                        "typeProperties": {
+                          "artifactId": "fbf08ea6-daa5-b0e1-4cdc-c9d677fdc15c",
+                          "workspaceId": "00000000-0000-0000-0000-000000000000",
+                          "rootFolder": "Files"
+                        },
+                        "annotations": []
+                      }
+                    },
+                    "annotations": []
+                  }
+                },
+                "sink": {
+                  "type": "BinarySink",
+                  "storeSettings": {
+                    "type": "LakehouseWriteSettings"
+                  },
+                  "datasetSettings": {
+                    "type": "Binary",
+                    "typeProperties": {
+                      "location": {
+                        "type": "LakehouseLocation",
+                        "folderPath": "@concat('bronze/bicing/', pipeline().parameters.folder)",
+                        "fileName": "@item()"
+                      }
+                    },
+                    "linkedService": {
+                      "name": "lh_bicing",
+                      "properties": {
+                        "type": "Lakehouse",
+                        "typeProperties": {
+                          "artifactId": "fbf08ea6-daa5-b0e1-4cdc-c9d677fdc15c",
+                          "workspaceId": "00000000-0000-0000-0000-000000000000",
+                          "rootFolder": "Files"
+                        },
+                        "annotations": []
+                      }
+                    },
+                    "annotations": []
+                  }
+                },
+                "enableStaging": false
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "copy_status_to_bronze",
+              "dependsOn": []
+            }
+          ]
+        },
+        "name": "foreach_status_file",
+        "dependsOn": []
+      }
+    ],
+    "parameters": {
+      "folder": {
+        "type": "string",
+        "defaultValue": "status"
+      },
+      "files": {
+        "type": "array",
+        "defaultValue": [
+          "status_2019-03.csv",
+          "status_2022-06.csv",
+          "status_2024-11.csv",
+          "status_2024-12.csv",
+          "status_2025-01.csv",
+          "status_2025-02.csv",
+          "status_2025-03.csv",
+          "status_2025-04.csv",
+          "status_2025-05.csv",
+          "status_2025-06.csv",
+          "status_2025-07.csv",
+          "status_2025-08.csv",
+          "status_2025-09.csv",
+          "status_2025-10.csv",
+          "status_2026-02.csv"
+        ]
+      }
+    }
+  }
+}

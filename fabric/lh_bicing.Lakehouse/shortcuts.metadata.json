@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "name": "dim_station_history",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/gold/dim_station_history",
+        "itemId": "00c3f52f-0eca-a16f-4604-9e1cac4df52c",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+        "artifactType": "Warehouse"
+      }
+    }
+  }
+]

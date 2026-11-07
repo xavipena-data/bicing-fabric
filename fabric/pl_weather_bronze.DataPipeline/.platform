@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "pl_weather_bronze"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "246cd174-4cca-aaaa-4449-04c32be2531f"
+  }
+}

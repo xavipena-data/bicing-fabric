@@ -1,0 +1,26 @@
+// KQL script
+// Use management commands in this script to configure your database items, such as tables, functions, materialized views, and more.
+
+
+.create-merge table station_status (snapshot_at:datetime, station_id:int, bikes_available:int, mechanical_bikes:int, ebikes:int, docks_available:int, last_reported_at:datetime, status:string) 
+.create-or-alter table station_status ingestion parquet mapping 'station_status_mapping'
+```
+[{"Properties":{"Path":"$['snapshot_at']"},"column":"snapshot_at","datatype":""},{"Properties":{"Path":"$['station_id']"},"column":"station_id","datatype":""},{"Properties":{"Path":"$['bikes_available']"},"column":"bikes_available","datatype":""},{"Properties":{"Path":"$['mechanical_bikes']"},"column":"mechanical_bikes","datatype":""},{"Properties":{"Path":"$['ebikes']"},"column":"ebikes","datatype":""},{"Properties":{"Path":"$['docks_available']"},"column":"docks_available","datatype":""},{"Properties":{"Path":"$['last_reported_at']"},"column":"last_reported_at","datatype":""},{"Properties":{"Path":"$['status']"},"column":"status","datatype":""}]
+```
+.create-merge table dim_station (station_id:int, name:string, station_kind:string, physical_configuration:string, address:string, lat:real, lon:real, altitude:real, district_code:string, district:string, neighbourhood_code:string, neighbourhood:string, post_code:string, is_charging_station:bool, first_seen_at:datetime, last_seen_at:datetime) 
+.create-or-alter table dim_station ingestion parquet mapping 'dim_station_mapping'
+```
+[{"Properties":{"Path":"$['station_id']"},"column":"station_id","datatype":""},{"Properties":{"Path":"$['name']"},"column":"name","datatype":""},{"Properties":{"Path":"$['station_kind']"},"column":"station_kind","datatype":""},{"Properties":{"Path":"$['physical_configuration']"},"column":"physical_configuration","datatype":""},{"Properties":{"Path":"$['address']"},"column":"address","datatype":""},{"Properties":{"Path":"$['lat']"},"column":"lat","datatype":""},{"Properties":{"Path":"$['lon']"},"column":"lon","datatype":""},{"Properties":{"Path":"$['altitude']"},"column":"altitude","datatype":""},{"Properties":{"Path":"$['district_code']"},"column":"district_code","datatype":""},{"Properties":{"Path":"$['district']"},"column":"district","datatype":""},{"Properties":{"Path":"$['neighbourhood_code']"},"column":"neighbourhood_code","datatype":""},{"Properties":{"Path":"$['neighbourhood']"},"column":"neighbourhood","datatype":""},{"Properties":{"Path":"$['post_code']"},"column":"post_code","datatype":""},{"Properties":{"Path":"$['is_charging_station']"},"column":"is_charging_station","datatype":""},{"Properties":{"Path":"$['first_seen_at']"},"column":"first_seen_at","datatype":""},{"Properties":{"Path":"$['last_seen_at']"},"column":"last_seen_at","datatype":""}]
+```
+.create-merge table dim_weather (hour_local:datetime, temperature_c:real, precipitation_mm:real, wind_ms:real, n_readings:int) 
+.create-or-alter table dim_weather ingestion parquet mapping 'dim_weather_mapping'
+```
+[{"Properties":{"Path":"$['hour_local']"},"column":"hour_local","datatype":""},{"Properties":{"Path":"$['temperature_c']"},"column":"temperature_c","datatype":""},{"Properties":{"Path":"$['precipitation_mm']"},"column":"precipitation_mm","datatype":""},{"Properties":{"Path":"$['wind_ms']"},"column":"wind_ms","datatype":""},{"Properties":{"Path":"$['n_readings']"},"column":"n_readings","datatype":""}]
+```
+.create-or-alter function with (folder = "bicing", docstring = "Average bikes and docks per local hour", skipvalidation = "true") hourly_occupancy() {
+    station_status
+    | extend hour_local = bin(datetime_utc_to_local(snapshot_at, "Europe/Madrid"), 1h)
+    | summarize avg_bikes = avg(bikes_available), avg_docks = avg(docks_available), readings = count() by hour_local
+}
+.create-or-alter materialized-view  hourly_station_mv on table station_status { station_status
+    | summarize avg_bikes = avg(bikes_available), readings = count() by station_id, hour_utc = bin(snapshot_at, 1h) }

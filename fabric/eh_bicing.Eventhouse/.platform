@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Eventhouse",
+    "displayName": "eh_bicing",
+    "description": "eh_bicing"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "33260304-9644-a4f5-4474-a3a3c8a29b38"
+  }
+}

@@ -161,3 +161,98 @@ t.groupBy("n_readings").count().orderBy("n_readings").show()
 # META   "language": "python",
 # META   "language_group": "synapse_pyspark"
 # META }
+
+# CELL ********************
+
+for s in ["bronze", "silver", "gold"]:
+    print("==", s)
+    for t in spark.catalog.listTables(s):
+        print("  ", t.name)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+t = spark.table("silver.station_status")
+t.printSchema()
+print("filas:", t.count())
+t.show(3, truncate=False)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+from pyspark.sql import functions as F
+
+oct25 = (spark.table("silver.station_status")
+         .filter((F.col("snapshot_at") >= "2025-10-01") & (F.col("snapshot_at") < "2025-11-01")))
+
+print("filas oct 2025:", oct25.count())
+print("estaciones:", oct25.select("station_id").distinct().count())
+
+oct25.groupBy("status", "is_installed", "is_renting", "is_returning", "is_charging_station") \
+     .count().orderBy(F.desc("count")).show(truncate=False)
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+spark.conf.set("spark.sql.parquet.outputTimestampType", "TIMESTAMP_MICROS")
+
+cols = ["snapshot_at", "station_id", "bikes_available", "mechanical_bikes",
+        "ebikes", "docks_available", "last_reported_at", "status"]
+
+(oct25.select(cols)
+      .coalesce(1)
+      .write.mode("overwrite")
+      .parquet("Files/export/station_status_2025_10"))
+
+chk = spark.read.parquet("Files/export/station_status_2025_10")
+print("filas exportadas:", chk.count())
+chk.printSchema()
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }
+
+# CELL ********************
+
+from pyspark.sql import functions as F
+from pyspark.sql.types import DecimalType
+
+def export(name):
+    df = spark.table(f"gold.{name}")
+    for f in df.schema.fields:
+        if isinstance(f.dataType, DecimalType):
+            df = df.withColumn(f.name, F.col(f.name).cast("double"))
+    df.printSchema()
+    print(name, "filas:", df.count())
+    df.coalesce(1).write.mode("overwrite").parquet(f"Files/export/{name}")
+
+export("dim_station")
+export("dim_weather")
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
+# META   "language_group": "synapse_pyspark"
+# META }

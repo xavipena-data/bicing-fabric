@@ -1,0 +1,121 @@
+// 01_eventhouse_queries.kql
+// Eventhouse eh_bicing - KQL database eh_bicing
+// Tables (loaded with Get data from OneLake Parquet exports):
+//   station_status : silver.station_status, October 2025, 5-minute readings, 8 columns
+//   dim_station    : gold.dim_station
+//   dim_weather    : gold.dim_weather (hour_local is LOCAL time, not UTC)
+// snapshot_at is UTC; convert with datetime_utc_to_local() before joining with dim_weather.
+
+// 1a. Sample rows
+station_status
+| take 10
+
+// 1b. Schema
+station_status
+| getschema
+
+// 2. Stations and date range
+station_status
+| summarize stations = dcount(station_id), rows = count(), first_at = min(snapshot_at), last_at = max(snapshot_at)
+
+// 3. Readings per status
+station_status
+| summarize rows = count() by status
+
+// 4. Station 1 on 15 October
+station_status
+| where station_id == 1 and snapshot_at >= datetime(2025-10-15) and snapshot_at < datetime(2025-10-16)
+| project snapshot_at, bikes_available, docks_available
+| sort by snapshot_at asc
+| take 20
+
+// 5b. Top 10 stations by average occupancy (minimum readings to avoid degenerate stations such as 536)
+station_status
+| extend capacity = bikes_available + docks_available
+| where capacity > 0
+| extend occupancy = todouble(bikes_available) / capacity
+| summarize avg_occupancy = avg(occupancy), readings = count() by station_id
+| where readings > 1000
+| top 10 by avg_occupancy desc
+
+// 6. Average bikes by local hour of day
+station_status
+| extend local_hour = hourofday(datetime_utc_to_local(snapshot_at, "Europe/Madrid"))
+| summarize avg_bikes = avg(bikes_available) by local_hour
+| sort by local_hour asc
+| render columnchart
+
+// 7. Daily average of available bikes per station
+station_status
+| summarize avg_bikes = avg(bikes_available) by day = bin(snapshot_at, 1d)
+| render timechart
+
+// 8. Weekday vs weekend by local hour
+station_status
+| extend local_ts = datetime_utc_to_local(snapshot_at, "Europe/Madrid")
+| extend is_weekend = toint(dayofweek(local_ts) / 1d) in (0, 6)
+| summarize weekday = avgif(bikes_available, not(is_weekend)), weekend = avgif(bikes_available, is_weekend) by local_hour = hourofday(local_ts)
+| sort by local_hour asc
+| render linechart
+
+// 9. Neighbourhoods with most empty-station readings
+station_status
+| where bikes_available == 0 and status == "IN_SERVICE"
+| summarize empty_readings = count() by station_id
+| join kind=inner (dim_station | project station_id, neighbourhood) on station_id
+| summarize empty_readings = sum(empty_readings) by neighbourhood
+| top 10 by empty_readings desc
+
+// 10. Share of readings with an empty station, by district (small table on the left of the join)
+dim_station
+| project station_id, district
+| join kind=inner station_status on station_id
+| summarize readings = count(), empty_pct = round(100.0 * countif(bikes_available == 0) / count(), 2) by district
+| sort by empty_pct desc
+
+// 11. Latest reading of each station
+station_status
+| summarize arg_max(snapshot_at, bikes_available, docks_available, status) by station_id
+| take 10
+
+// 12. Average bikes by temperature band (aggregate before the join)
+station_status
+| extend hour_local = bin(datetime_utc_to_local(snapshot_at, "Europe/Madrid"), 1h)
+| summarize avg_bikes = avg(bikes_available) by hour_local
+| join kind=inner dim_weather on hour_local
+| where isnotnull(temperature_c)
+| summarize avg_bikes = avg(avg_bikes), hours = count() by temp_band = bin(temperature_c, 5)
+| sort by temp_band asc
+
+// 13. Rain effect, daytime hours only (8 to 20)
+station_status
+| extend hour_local = bin(datetime_utc_to_local(snapshot_at, "Europe/Madrid"), 1h)
+| summarize avg_bikes = avg(bikes_available) by hour_local
+| where hourofday(hour_local) between (8 .. 20)
+| join kind=inner dim_weather on hour_local
+| where isnotnull(precipitation_mm)
+| summarize avg_bikes = avg(avg_bikes), hours = count() by weather = iff(precipitation_mm > 0, "rain", "dry")
+
+// 14a. Stored function
+.create-or-alter function with (docstring = "Average bikes and docks per local hour", folder = "bicing")
+hourly_occupancy() {
+    station_status
+    | extend hour_local = bin(datetime_utc_to_local(snapshot_at, "Europe/Madrid"), 1h)
+    | summarize avg_bikes = avg(bikes_available), avg_docks = avg(docks_available), readings = count() by hour_local
+}
+
+// 14b. Use the function
+hourly_occupancy()
+| join kind=inner dim_weather on hour_local
+| take 5
+
+// 15a. Materialized view (async because of backfill)
+.create async materialized-view with (backfill = true) hourly_station_mv on table station_status
+{
+    station_status
+    | summarize avg_bikes = avg(bikes_available), readings = count() by station_id, hour_utc = bin(snapshot_at, 1h)
+}
+
+// 15b. Check: total_readings must match the source table (4.489.506)
+hourly_station_mv
+| summarize view_rows = count(), total_readings = sum(readings)

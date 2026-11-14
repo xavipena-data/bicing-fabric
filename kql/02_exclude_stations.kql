@@ -1,0 +1,37 @@
+// 02_exclude_stations.kql
+// Eventhouse eh_bicing. Run after nb_11_exclude_stations.
+//
+// Applies to the Eventhouse the same station exclusion that nb_11 applies to the lakehouse
+// (stations 536, 542, 543, 545, 588 and 597).
+// Run each command on its own, one at a time: soft deletes must not run in parallel
+// on the same table. Deletes are final.
+// station_status only covers October 2025, so it has no rows for stations that closed earlier.
+
+// 1. Before: how many rows will go.
+//    Expected: station_status 4.489.506 rows (8.574 to remove), dim_station 554 (6).
+station_status
+| summarize filas_total = count(), filas_a_quitar = countif(station_id in (536,542,543,545,588,597))
+
+dim_station
+| summarize filas_total = count(), filas_a_quitar = countif(station_id in (536,542,543,545,588,597))
+
+// 2. Preview: whatif deletes nothing and reports the rows that match (column RecordsMatchPredicate).
+.delete table station_status records with (whatif=true) <| station_status | where station_id in (536,542,543,545,588,597)
+
+// 3. Delete from the tables.
+.delete table station_status records <| station_status | where station_id in (536,542,543,545,588,597)
+
+.delete table dim_station records <| dim_station | where station_id in (536,542,543,545,588,597)
+
+// 4. The materialized view keeps its own aggregates: deleting from the source table does not
+//    remove them, so delete from the view as well. Expected: 719 rows.
+//    If it fails with a conflict with the background materialization, run it again.
+.delete materialized-view hourly_station_mv records with (whatif=true) <| hourly_station_mv | where station_id in (536,542,543,545,588,597)
+
+.delete materialized-view hourly_station_mv records <| hourly_station_mv | where station_id in (536,542,543,545,588,597)
+
+// 5. After: run the queries of step 1 again and this one.
+//    Expected: station_status 4.480.932 rows, dim_station 548, filas_a_quitar = 0,
+//    and in the view 374.692 rows, 545 stations, filas_a_quitar = 0.
+hourly_station_mv
+| summarize filas = count(), estaciones = dcount(station_id), filas_a_quitar = countif(station_id in (536,542,543,545,588,597))

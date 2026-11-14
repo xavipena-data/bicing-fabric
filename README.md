@@ -210,7 +210,8 @@ The district and month slicers are synchronized across *Where* and *When*. Scree
 8. Eventhouse: create `eh_bicing`, export the gold tables to Parquet in `Files/export/`, load them with *Get data* from OneLake, and run the queries in [`kql/`](kql/).
 9. Run `nb_08_ds_exploration` to build the modeling dataset, the baseline and the three split tables.
 10. Run `nb_09_ml_training` (trains and compares the models, logs them to MLflow and registers the best one), then `nb_10_batch_predictions` (creates `gold.station_predictions`), then `nb_11_exclude_stations`.
-11. The semantic model `sm_bicing` and the report `rpt_bicing` arrive with the Git sync. Check that the semantic model points to `lh_bicing` of the new workspace, refresh it and open the report.
+11. Apply the same station exclusion to the other two copies of the gold model: run [`sql/07_exclude_stations.sql`](sql/07_exclude_stations.sql) in `wh_bicing` and [`kql/02_exclude_stations.kql`](kql/02_exclude_stations.kql) in `eh_bicing`, one command at a time. The figures in this README are the ones you get after this step.
+12. The semantic model `sm_bicing` and the report `rpt_bicing` arrive with the Git sync. Check that the semantic model points to `lh_bicing` of the new workspace, refresh it and open the report.
 
 ## Repository structure
 

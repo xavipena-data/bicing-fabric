@@ -189,7 +189,15 @@ The model beats the baseline by about 3 points of F1 on both sets. The gain is r
 | When | Heat matrix of the empty rate by hour and weekday, weekdays against weekends by hour, and dry against rainy hours by hour |
 | Model | Model card, precision, recall, F1 and accuracy, confusion matrix, predicted against actual empty stations, and precision and recall by hour |
 
-The district and month slicers are synchronized across *Where* and *When*. Screenshots of each page are in [`docs/images`](docs/images).
+The district and month slicers are synchronized across *Where* and *When*.
+
+![Overview page of the report: network KPIs, empty rate by month and by district](docs/images/01_overview.png)
+
+![Where page: map of the stations, districts against the network and top 10 stations by empty rate](docs/images/02_where.png)
+
+![When page: empty rate by hour and day of week, weekdays against weekends, dry against rainy hours](docs/images/03_when.png)
+
+![Model page: precision, recall, F1, accuracy, confusion matrix and model card](docs/images/04_model.png)
 
 **What the report shows.** Across the whole period, the empty rate is 10,20 % of readings: 10,42 % on weekdays and 9,65 % at weekends. The top 10 of stations by empty rate has no minimum number of readings, on purpose: it is meant for someone who wants the real situation of the stations, so recently opened stations with few readings appear too. The month line chart shows the 28 April 2025 blackout as a spike in out-of-service readings (see [Data quality decisions](#data-quality-decisions)).
 

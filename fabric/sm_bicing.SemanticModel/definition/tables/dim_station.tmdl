@@ -1,0 +1,177 @@
+table dim_station
+	lineageTag: 2196c7f9-57e2-484e-88e9-f45ec635a86d
+	sourceLineageTag: [gold].[dim_station]
+
+	column station_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 2ab196f7-1f75-4be9-8e65-88785e84b0bf
+		sourceLineageTag: station_id
+		summarizeBy: none
+		sourceColumn: station_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column name
+		dataType: string
+		lineageTag: 9e8b592f-8600-43f4-92db-525cba3a66a8
+		sourceLineageTag: name
+		summarizeBy: none
+		sourceColumn: name
+
+		annotation SummarizationSetBy = Automatic
+
+	column station_kind
+		dataType: string
+		lineageTag: e84d1bd3-8921-45f9-8ac3-2f72b877a3a3
+		sourceLineageTag: station_kind
+		summarizeBy: none
+		sourceColumn: station_kind
+
+		annotation SummarizationSetBy = Automatic
+
+	column physical_configuration
+		dataType: string
+		lineageTag: 9f2a34bb-cb15-4af9-a6f6-2e9d8cf10fe6
+		sourceLineageTag: physical_configuration
+		summarizeBy: none
+		sourceColumn: physical_configuration
+
+		annotation SummarizationSetBy = Automatic
+
+	column address
+		dataType: string
+		lineageTag: 9dd274af-4045-4f32-ab19-201e096e29d1
+		sourceLineageTag: address
+		summarizeBy: none
+		sourceColumn: address
+
+		annotation SummarizationSetBy = Automatic
+
+	column lat
+		dataType: double
+		lineageTag: 898c47e1-15cd-47eb-93ce-0d9fd8c0f719
+		sourceLineageTag: lat
+		summarizeBy: sum
+		sourceColumn: lat
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column lon
+		dataType: double
+		lineageTag: 32ba3171-2d15-4d57-956f-04dc07fda793
+		sourceLineageTag: lon
+		summarizeBy: sum
+		sourceColumn: lon
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column altitude
+		dataType: double
+		lineageTag: 5210c883-0cf5-4cab-8f09-eeaef9269ef1
+		sourceLineageTag: altitude
+		summarizeBy: sum
+		sourceColumn: altitude
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column district_code
+		dataType: string
+		lineageTag: a255cc6c-22b1-4699-ba18-52c0df3a91d2
+		sourceLineageTag: district_code
+		summarizeBy: none
+		sourceColumn: district_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column district
+		dataType: string
+		isHidden
+		lineageTag: 705af056-2d91-4195-85ca-5ef52d929cda
+		sourceLineageTag: district
+		summarizeBy: none
+		sourceColumn: district
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column neighbourhood_code
+		dataType: string
+		lineageTag: 2722cd29-7f8a-45af-aaca-36d472f9f8da
+		sourceLineageTag: neighbourhood_code
+		summarizeBy: none
+		sourceColumn: neighbourhood_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column neighbourhood
+		dataType: string
+		lineageTag: 3e791c7b-b5eb-4865-8f48-749c42cea32a
+		sourceLineageTag: neighbourhood
+		summarizeBy: none
+		sourceColumn: neighbourhood
+
+		annotation SummarizationSetBy = Automatic
+
+	column post_code
+		dataType: string
+		lineageTag: e9b65850-5434-4a73-b83a-f592a8e758d6
+		sourceLineageTag: post_code
+		summarizeBy: none
+		sourceColumn: post_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_charging_station
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 33227b5b-f2c4-4d70-9eb4-73a09d13ff63
+		sourceLineageTag: is_charging_station
+		summarizeBy: none
+		sourceColumn: is_charging_station
+
+		annotation SummarizationSetBy = Automatic
+
+	column first_seen_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 583e0d5e-e029-4e98-bcf7-ca75047cd0e4
+		sourceLineageTag: first_seen_at
+		summarizeBy: none
+		sourceColumn: first_seen_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column last_seen_at
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: dda04c13-d0d9-4c1b-8a9c-86c8890e9304
+		sourceLineageTag: last_seen_at
+		summarizeBy: none
+		sourceColumn: last_seen_at
+
+		annotation SummarizationSetBy = Automatic
+
+	column district_label
+		dataType: string
+		lineageTag: 123c4234-95bd-40e6-8af1-6e3351569fbc
+		sourceLineageTag: district_label
+		summarizeBy: none
+		sourceColumn: district_label
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_station = entity
+		mode: directLake
+		source
+			entityName: dim_station
+			schemaName: gold
+			expressionSource: 'DirectLake - lh_bicing'
+

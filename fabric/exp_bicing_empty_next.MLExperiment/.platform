@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "MLExperiment",
+    "displayName": "exp_bicing_empty_next",
+    "description": ""
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "819e5914-60b8-a01a-413c-64d2fbe3872f"
+  }
+}

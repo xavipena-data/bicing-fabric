@@ -1,0 +1,67 @@
+table dim_weather
+	lineageTag: 29b37ede-878d-4d30-821c-2d7b92785a8e
+	sourceLineageTag: [gold].[dim_weather]
+
+	column hour_local
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: f80772eb-7748-4574-8fee-66c95030d99a
+		sourceLineageTag: hour_local
+		summarizeBy: none
+		sourceColumn: hour_local
+
+		annotation SummarizationSetBy = Automatic
+
+	column temperature_c
+		dataType: decimal
+		formatString: #,0.00
+		lineageTag: 5f73bc67-fb56-4ef5-a52e-6ed08f955d0d
+		sourceLineageTag: temperature_c
+		summarizeBy: none
+		sourceColumn: temperature_c
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+	column precipitation_mm
+		dataType: double
+		formatString: 0.00
+		lineageTag: 55b1ec24-ab92-4896-b9fb-e843198164fc
+		sourceLineageTag: precipitation_mm
+		summarizeBy: none
+		sourceColumn: precipitation_mm
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+	column wind_ms
+		dataType: decimal
+		formatString: #,0.00
+		lineageTag: df00d9c1-fb42-4cc8-b3e8-975d6557c720
+		sourceLineageTag: wind_ms
+		summarizeBy: none
+		sourceColumn: wind_ms
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+	column n_readings
+		dataType: int64
+		formatString: 0
+		lineageTag: 97f73860-a7cc-4cc8-a532-ec26a64fb36d
+		sourceLineageTag: n_readings
+		summarizeBy: none
+		sourceColumn: n_readings
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_weather = entity
+		mode: directLake
+		source
+			entityName: dim_weather
+			schemaName: gold
+			expressionSource: 'DirectLake - lh_bicing'
+

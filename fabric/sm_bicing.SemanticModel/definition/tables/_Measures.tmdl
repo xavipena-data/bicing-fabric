@@ -1,0 +1,336 @@
+table _Measures
+	lineageTag: bc58c238-a3bb-4bc0-b824-dc3be7d0a846
+
+	measure Readings = ```
+			
+			        SUM ( fact_station_availability[readings] )
+			```
+		formatString: #,0
+		displayFolder: Availability
+		lineageTag: 450943b0-dfd8-4812-a029-6aa13239e39c
+
+	measure 'Empty Readings' = ```
+			
+			        SUM ( fact_station_availability[empty_readings] )
+			```
+		formatString: #,0
+		displayFolder: Availability
+		lineageTag: f32cd9c3-efc7-4fca-b3a9-c3dd5d9326a2
+
+	measure 'Full Readings' = ```
+			
+			        SUM ( fact_station_availability[full_readings] )
+			```
+		formatString: #,0
+		displayFolder: Availability
+		lineageTag: 7f086295-3d2f-432a-b836-1bd0918174fd
+
+	measure 'Out of Service Readings' = ```
+			
+			        SUM ( fact_station_availability[out_of_service_readings] )
+			```
+		formatString: #,0
+		displayFolder: Availability
+		lineageTag: 1917ff0e-5fa0-4af0-a5b9-fc8d9703fc37
+
+	measure 'Active Stations' = ```
+			
+			        DISTINCTCOUNT ( fact_station_availability[station_id] )
+			```
+		formatString: #,0
+		displayFolder: Availability
+		lineageTag: 1e12745c-9d36-49bd-9154-1154120b566f
+
+	measure 'Empty Rate %' = ```
+			
+			        DIVIDE ( [Empty Readings], [Readings] )
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Availability
+		lineageTag: 2d65dc6e-bbfa-49a4-9909-029fe89c8a66
+
+	measure 'Full Rate %' = ```
+			
+			        DIVIDE ( [Full Readings], [Readings] )
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Availability
+		lineageTag: 17f1a1b2-482e-4e0d-bc3d-e60ecb8ac94d
+
+	measure 'Out of Service Rate %' = ```
+			
+			        DIVIDE ( [Out of Service Readings], [Readings] )
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Availability
+		lineageTag: 416391e7-55d9-4580-8e29-d22a1e910b77
+
+	measure 'Avg Bikes Available' = ```
+			
+			        DIVIDE (
+			            SUMX (
+			                fact_station_availability,
+			                fact_station_availability[avg_bikes_available] * fact_station_availability[readings]
+			            ),
+			            [Readings]
+			        )
+			```
+		formatString: 0.00
+		displayFolder: Availability
+		lineageTag: 44c0e5e7-cc1e-4013-afbb-666d0b3eff47
+
+	measure 'Avg Docks Available' = ```
+			
+			        DIVIDE (
+			            SUMX (
+			                fact_station_availability,
+			                fact_station_availability[avg_docks_available] * fact_station_availability[readings]
+			            ),
+			            [Readings]
+			        )
+			```
+		formatString: 0.00
+		displayFolder: Availability
+		lineageTag: 27fc1fdc-9eec-44be-89ac-dabd0d055dc8
+
+	measure Predictions = ```
+			
+			        COUNTROWS ( station_predictions )
+			```
+		formatString: #,0
+		displayFolder: Model
+		lineageTag: 18367034-bc41-4fbf-aad1-451cf470ece5
+
+	measure 'Predicted Empty' = ```
+			
+			        SUM ( station_predictions[empty_predicted] )
+			```
+		formatString: #,0
+		displayFolder: Model
+		lineageTag: e73b8189-86ce-4eee-891d-2be4b3713750
+
+	measure 'Actual Empty' = ```
+			
+			        SUM ( station_predictions[empty_actual] )
+			```
+		formatString: #,0
+		displayFolder: Model
+		lineageTag: 3106eddb-5ff6-43e1-aafb-a45330ccbfe7
+
+	measure 'True Positives' = ```
+			
+			        CALCULATE (
+			            COUNTROWS ( station_predictions ),
+			            station_predictions[empty_predicted] = 1,
+			            station_predictions[empty_actual] = 1
+			        )
+			```
+		formatString: #,0
+		displayFolder: Model
+		lineageTag: 8ce78724-5357-47eb-acb3-d274a6546ea0
+
+	measure 'False Positives' = ```
+			
+			        CALCULATE (
+			            COUNTROWS ( station_predictions ),
+			            station_predictions[empty_predicted] = 1,
+			            station_predictions[empty_actual] = 0
+			        )
+			```
+		formatString: #,0
+		displayFolder: Model
+		lineageTag: a9a66ab5-8898-4334-950f-1c8d62603d4f
+
+	measure 'False Negatives' = ```
+			
+			        CALCULATE (
+			            COUNTROWS ( station_predictions ),
+			            station_predictions[empty_predicted] = 0,
+			            station_predictions[empty_actual] = 1
+			        )
+			```
+		formatString: #,0
+		displayFolder: Model
+		lineageTag: 55ac2355-e179-4f7c-9486-530857e8d4ca
+
+	measure 'True Negatives' = ```
+			
+			        CALCULATE (
+			            COUNTROWS ( station_predictions ),
+			            station_predictions[empty_predicted] = 0,
+			            station_predictions[empty_actual] = 0
+			        )
+			```
+		formatString: #,0
+		displayFolder: Model
+		lineageTag: e02d5910-29de-44d9-9176-b175e988199c
+
+	measure Precision = ```
+			
+			        DIVIDE ( [True Positives], [True Positives] + [False Positives] )
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Model
+		lineageTag: 9e751d22-5eb4-4674-a9a4-c2418586794a
+
+	measure Recall = ```
+			
+			        DIVIDE ( [True Positives], [True Positives] + [False Negatives] )
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Model
+		lineageTag: 2b201a1d-7abd-4695-bc93-db3a9bce3a1a
+
+	measure F1 = ```
+			
+			        DIVIDE ( 2 * [Precision] * [Recall], [Precision] + [Recall] )
+			```
+		formatString: 0.00
+		displayFolder: Model
+		lineageTag: c8316d7d-5571-4b6e-a7cd-73853c9e6e77
+
+	measure Accuracy = ```
+			
+			        DIVIDE ( [True Positives] + [True Negatives], [Predictions] )
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Model
+		lineageTag: 5928c37c-ae0a-48f6-8a09-4e6b6c3d6645
+
+	measure 'Avg Empty Probability' = ```
+			
+			        AVERAGE ( station_predictions[empty_probability] )
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		displayFolder: Model
+		lineageTag: d3725d1e-a269-4e91-bc17-113bf3258416
+
+	measure 'Empty Rate % (Dry Hours)' = ```
+			
+			        CALCULATE ( [Empty Rate %], dim_weather[precipitation_mm] = 0 )
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: ba16a77e-6c64-4eee-b760-71851bf6487b
+
+	measure 'Empty Rate % (Rainy Hours)' = ```
+			
+			        CALCULATE ( [Empty Rate %], dim_weather[precipitation_mm] > 0 )
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: a8f364c0-c521-4f44-aa77-6066a10c714b
+
+	measure 'Readings (Rainy Hours)' = ```
+			
+			        CALCULATE ( [Readings], dim_weather[precipitation_mm] > 0 )
+			```
+		formatString: #,0
+		lineageTag: 5c4942ad-dea6-45ac-9b48-4b4330d8737e
+
+	measure 'Title by Month' = ```
+			
+			        VAR m =
+			            SWITCH (
+			                SELECTEDVALUE ( 'Metric Selector'[Metric Selector Order] ),
+			                0, "Empty Rate %",
+			                1, "Full Rate %",
+			                2, "Out of Service Rate %",
+			                3, "Avg Bikes Available",
+			                4, "Avg Docks Available",
+			                "Metric"
+			            )
+			        RETURN m & " by Month"
+			```
+		lineageTag: 68a5259c-ff8a-479f-8432-ab2d356b048d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Title by District' = ```
+			
+			        VAR m =
+			            SWITCH (
+			                SELECTEDVALUE ( 'Metric Selector'[Metric Selector Order] ),
+			                0, "Empty Rate %",
+			                1, "Full Rate %",
+			                2, "Out of Service Rate %",
+			                3, "Avg Bikes Available",
+			                4, "Avg Docks Available",
+			                "Metric"
+			            )
+			        RETURN m & " by District"
+			```
+		lineageTag: b6df1d12-3b6f-49a4-82c8-921f7beb7a80
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Note Blackout' = ```
+			
+			        IF (
+			            SELECTEDVALUE ( 'Metric Selector'[Metric Selector Order] ) = 2,
+			            "Note: the April 2025 spike is the Iberian blackout of 28 April (30,12% of that day's readings). Kept as a real event.",
+			            ""
+			        )
+			```
+		lineageTag: 307db084-00c8-4aa9-bf2a-642eadc1ca26
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Station Name' = ```
+			
+			        SELECTEDVALUE ( dim_station[name], "Several stations" )
+			```
+		lineageTag: 8e9fe0be-0b59-4c2e-a4a4-7e78fd06cf6f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure District = ```
+			
+			        SELECTEDVALUE ( dim_station[district_label], "Several districts" )
+			```
+		lineageTag: 9988829c-72dd-4b1d-8c0c-3bd7df53a851
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'First Seen' = ```
+			
+			        FORMAT ( MIN ( dim_station[first_seen_at] ), "dd/MM/yyyy" )
+			```
+		lineageTag: 8ba8ff9c-0d59-4a4c-87b4-cb13a00f7702
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Empty Rate % (Weekdays)' = ```
+			
+			        CALCULATE (
+			            [Empty Rate %],
+			            dim_time[day_name] IN { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" }
+			        )
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: e0037703-4ad4-48ff-b13f-44eefac8ee4f
+
+	measure 'Empty Rate % (Weekends)' = ```
+			
+			        CALCULATE (
+			            [Empty Rate %],
+			            dim_time[day_name] IN { "Saturday", "Sunday" }
+			        )
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 44da5d4d-d701-42d9-bda5-ab44f460e77d
+
+	column x
+		isHidden
+		formatString: 0
+		lineageTag: 36fb8204-1b51-413e-96a6-022fb6df0050
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [x]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Measures = calculated
+		mode: import
+		source = ROW("x", 1)
+
+	annotation PBI_Id = 84d08fb1a59b40a1b44b2c7e19b37a04
+

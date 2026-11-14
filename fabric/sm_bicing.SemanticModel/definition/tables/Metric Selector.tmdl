@@ -1,0 +1,51 @@
+table 'Metric Selector'
+	lineageTag: 7227528f-0f6a-4ce0-9ad4-2ebb67b2a873
+
+	column 'Metric Selector'
+		lineageTag: ec2886cc-92e5-44e6-ad01-0fab9b02f9ff
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Metric Selector Order'
+
+		relatedColumnDetails
+			groupByColumn: 'Metric Selector Fields'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Metric Selector Fields'
+		isHidden
+		lineageTag: 3f07d4d8-7323-4dec-acea-9dc0efaf3006
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Metric Selector Order'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Metric Selector Order'
+		isHidden
+		formatString: 0
+		lineageTag: f6db6f09-b339-4033-af4c-76ea48f234bc
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Metric Selector' = calculated
+		mode: import
+		source =
+				{
+				    ("Empty Rate %", NAMEOF('_Measures'[Empty Rate %]), 0),
+				    ("Full Rate %", NAMEOF('_Measures'[Full Rate %]), 1),
+				    ("Out of Service Rate %", NAMEOF('_Measures'[Out of Service Rate %]), 2),
+				    ("Avg Bikes Available", NAMEOF('_Measures'[Avg Bikes Available]), 3),
+				    ("Avg Docks Available", NAMEOF('_Measures'[Avg Docks Available]), 4)
+				}
+
+	annotation PBI_Id = 49acc329ea5d4dfb8e549e194d29a6a0
+

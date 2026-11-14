@@ -1,0 +1,84 @@
+table station_predictions
+	lineageTag: 6f067b93-923b-49ab-bbe9-18b31b5e62f4
+	sourceLineageTag: [gold].[station_predictions]
+
+	column station_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 9fc263d8-1e9c-4159-8272-17ac52f793e2
+		sourceLineageTag: station_id
+		summarizeBy: none
+		sourceColumn: station_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column hour_local
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: 7826d87b-35ac-4176-8f93-f0426a7df5ac
+		sourceLineageTag: hour_local
+		summarizeBy: none
+		sourceColumn: hour_local
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column split
+		dataType: string
+		lineageTag: 5e2fb1f0-22b0-4616-a4e8-4edd752f1376
+		sourceLineageTag: split
+		summarizeBy: none
+		sourceColumn: split
+
+		annotation SummarizationSetBy = Automatic
+
+	column empty_probability
+		dataType: double
+		isHidden
+		lineageTag: 98910c6b-4655-441e-8efd-912e6aadd86c
+		sourceLineageTag: empty_probability
+		summarizeBy: sum
+		sourceColumn: empty_probability
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column empty_predicted
+		dataType: int64
+		formatString: 0
+		lineageTag: 22d247e4-e006-4e1d-990b-f63166efee40
+		sourceLineageTag: empty_predicted
+		summarizeBy: sum
+		sourceColumn: empty_predicted
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column empty_actual
+		dataType: int64
+		formatString: 0
+		lineageTag: 70d86469-87d2-4a94-b379-b69c82e88c27
+		sourceLineageTag: empty_actual
+		summarizeBy: sum
+		sourceColumn: empty_actual
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition station_predictions = entity
+		mode: directLake
+		source
+			entityName: station_predictions
+			schemaName: gold
+			expressionSource: 'DirectLake - lh_bicing'
+

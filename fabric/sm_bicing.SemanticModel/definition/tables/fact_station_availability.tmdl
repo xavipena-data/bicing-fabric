@@ -1,0 +1,156 @@
+table fact_station_availability
+	lineageTag: c1a45ff1-fefb-44d7-a03a-77ec697e4f6b
+	sourceLineageTag: [gold].[fact_station_availability]
+
+	column station_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 27c451dd-a9ea-44dc-8d28-be7ac0c93abd
+		sourceLineageTag: station_id
+		summarizeBy: none
+		sourceColumn: station_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column hour_local
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: 1cb5dfbf-be93-4696-b455-1622ecb80920
+		sourceLineageTag: hour_local
+		summarizeBy: none
+		sourceColumn: hour_local
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column readings
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: d4ec01c8-b47c-4777-a8f3-e21889f2b4e2
+		sourceLineageTag: readings
+		summarizeBy: sum
+		sourceColumn: readings
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column avg_bikes_available
+		dataType: double
+		isHidden
+		lineageTag: 74480bd2-bfb8-425a-b7d4-36877eb0b7a0
+		sourceLineageTag: avg_bikes_available
+		summarizeBy: sum
+		sourceColumn: avg_bikes_available
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column min_bikes_available
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: f110ff26-bbe8-421c-99d9-ed8d6f859546
+		sourceLineageTag: min_bikes_available
+		summarizeBy: sum
+		sourceColumn: min_bikes_available
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column max_bikes_available
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: ffa52f6d-273c-4db5-9993-f68689ccf157
+		sourceLineageTag: max_bikes_available
+		summarizeBy: sum
+		sourceColumn: max_bikes_available
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column avg_docks_available
+		dataType: double
+		isHidden
+		lineageTag: 2678ea29-01b4-4b27-9594-4c0b1da4469a
+		sourceLineageTag: avg_docks_available
+		summarizeBy: sum
+		sourceColumn: avg_docks_available
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column empty_readings
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 084a0365-6b16-4f13-9431-e5a8d09799d4
+		sourceLineageTag: empty_readings
+		summarizeBy: sum
+		sourceColumn: empty_readings
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column full_readings
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 816ab88b-8842-4611-8968-9b4aa7b4b94b
+		sourceLineageTag: full_readings
+		summarizeBy: sum
+		sourceColumn: full_readings
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column out_of_service_readings
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: a8da87e6-d94b-488a-8399-6ace9f7061ff
+		sourceLineageTag: out_of_service_readings
+		summarizeBy: sum
+		sourceColumn: out_of_service_readings
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column capacity
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: df27d7d5-0c56-4787-9f8c-7c776af1609a
+		sourceLineageTag: capacity
+		summarizeBy: sum
+		sourceColumn: capacity
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_station_availability = entity
+		mode: directLake
+		source
+			entityName: fact_station_availability
+			schemaName: gold
+			expressionSource: 'DirectLake - lh_bicing'
+

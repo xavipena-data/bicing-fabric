@@ -1,0 +1,20 @@
+relationship 1957e23f-a95c-2086-f4df-fc46017cc7a9
+	fromColumn: fact_station_availability.station_id
+	toColumn: dim_station.station_id
+
+relationship 174f3b39-b6d7-07e5-189c-3fa1cbe1e0c1
+	fromColumn: fact_station_availability.hour_local
+	toColumn: dim_time.hour_local
+
+relationship 32c18926-81e4-8706-4125-6a98e453aeb6
+	fromColumn: fact_station_availability.hour_local
+	toColumn: dim_weather.hour_local
+
+relationship 70260298-b086-55e7-4112-ea4564af32db
+	fromColumn: station_predictions.station_id
+	toColumn: dim_station.station_id
+
+relationship b377d4fb-d9b6-04a7-c961-718115d260a2
+	fromColumn: station_predictions.hour_local
+	toColumn: dim_time.hour_local
+

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "sm_bicing"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "19679003-6a51-9cd1-4bf9-5160510fb682"
+  }
+}

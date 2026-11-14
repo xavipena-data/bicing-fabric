@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "MLModel",
+    "displayName": "ml_bicing_empty_next"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "2a4426b7-33b2-913d-4a9f-5bb5e6da4230"
+  }
+}

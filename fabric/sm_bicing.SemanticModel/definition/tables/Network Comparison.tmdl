@@ -1,0 +1,66 @@
+table 'Network Comparison'
+	lineageTag: eac1f8d1-4cf9-4a88-8ee0-538bc8065220
+
+	calculationGroup
+
+		calculationItem Actual = SELECTEDMEASURE()
+
+			formatStringDefinition = SELECTEDMEASUREFORMATSTRING()
+
+		calculationItem 'Δ vs Network' =
+				
+				IF (
+				    ISBLANK ( SELECTEDMEASURE () ),
+				    BLANK (),
+				    IF (
+				        ISSELECTEDMEASURE ( [Empty Rate %], [Full Rate %], [Out of Service Rate %] ),
+				        ( SELECTEDMEASURE () - CALCULATE ( SELECTEDMEASURE (), ALL ( dim_station ) ) ) * 100,
+				        IF (
+				            ISSELECTEDMEASURE ( [Avg Bikes Available], [Avg Docks Available] ),
+				            SELECTEDMEASURE () - CALCULATE ( SELECTEDMEASURE (), ALL ( dim_station ) ),
+				            BLANK ()
+				        )
+				    )
+				)
+
+			formatStringDefinition =
+					IF (
+					    ISSELECTEDMEASURE ( [Empty Rate %], [Full Rate %], [Out of Service Rate %] ),
+					    "+0.00"" pp"";-0.00"" pp"";0.00"" pp""",
+					    "+0.00;-0.00;0.00"
+					)
+
+		calculationItem 'Index vs Network' =
+				
+				IF (
+				    ISSELECTEDMEASURE (
+				        [Empty Rate %], [Full Rate %], [Out of Service Rate %],
+				        [Avg Bikes Available], [Avg Docks Available]
+				    ),
+				    DIVIDE ( SELECTEDMEASURE (), CALCULATE ( SELECTEDMEASURE (), ALL ( dim_station ) ) ) * 100,
+				    BLANK ()
+				)
+
+			formatStringDefinition = "0"
+
+	column Comparison
+		dataType: string
+		lineageTag: e6c556f9-8b29-4d07-866d-99b7c98126b0
+		summarizeBy: none
+		sourceColumn: Name
+		sortByColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ordinal
+		dataType: int64
+		formatString: 0
+		lineageTag: 55440b50-837c-4776-ab91-4adf9f6edd5d
+		summarizeBy: sum
+		sourceColumn: Ordinal
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Network Comparison' = calculationGroup
+		mode: import
+
